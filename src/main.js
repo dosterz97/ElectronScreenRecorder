@@ -59,3 +59,7 @@ ipcMain.handle('showSaveDialog', async () => {
     defaultPath: `vid-${Date.now()}.webm`
   });
 })
+
+ipcMain.handle('getOperatingSystem', () => {
+  return process.platform
+})

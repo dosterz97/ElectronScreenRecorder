@@ -70,10 +70,19 @@ async function getVideoSources() {
 
 
   async function startRecording() {
-    const screenId =selectMenu.options[selectMenu.selectedIndex].value
+    const screenId = selectMenu.options[selectMenu.selectedIndex].value
+    
+    // AUDIO WONT WORK ON MACOS
+    const IS_MACOS = await ipcRenderer.invoke("getOperatingSystem") === 'darwin'
+    console.log(await ipcRenderer.invoke('getOperatingSystem'))
+    const audio = !IS_MACOS ? {
+      mandatory: {
+        chromeMediaSource: 'desktop'
+      }
+    } : false
   
     const constraints = {
-      audio: false,
+      audio,
       video: {
         mandatory: {
           chromeMediaSource: 'desktop',
@@ -102,13 +111,16 @@ function onDataAvailable(e) {
 
 
 async function stopRecording() {
+    videoElement.srcObject = null
+
     const blob = new Blob(recordedChunks, {
       type: 'video/webm; codecs=vp9'
     });
   
     const buffer = Buffer.from(await blob.arrayBuffer());
+    recordedChunks = []
+
     const { canceled, filePath } =  await ipcRenderer.invoke('showSaveDialog')
-  
     if(canceled) return
   
     if (filePath) {

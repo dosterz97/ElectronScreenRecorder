@@ -34,7 +34,7 @@ import { ipcRenderer } from 'electron';
 import { writeFile } from 'fs';
 
 let mediaRecorder;
-const recordedChunks = [];
+let recordedChunks = [];
 
 // Buttons
 const videoElement = document.querySelector('video');
